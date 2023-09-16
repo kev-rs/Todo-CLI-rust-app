@@ -12,10 +12,10 @@ pub struct Todo {
     status: Status,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-enum Status {
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub enum Status {
     Done,
-    IN_PROGRESS,
+    InProgress,
     IDLE
 }
 
@@ -29,6 +29,35 @@ impl Todo {
             created_at: local.to_rfc2822(),
             updated_at: None,
             status: Status::IDLE
+        }
+    }
+
+    pub fn get_value<'a>(&'a self) -> &'a str{
+        &self.value
+    }
+
+    pub fn get_status<'a>(&'a self) -> &'a Status {
+        &self.status
+    }
+
+    pub fn get_created_at<'a>(&'a self) -> &'a str {
+        &self.created_at
+    }
+
+    pub fn get_updated_at<'a>(&'a self) -> Option<&String> {
+        let s = self.updated_at.as_ref();
+        s
+    }
+}
+
+
+impl Clone for Todo {
+    fn clone(&self) -> Self {
+        Self {
+            value: self.get_value().to_string(),
+            created_at: self.get_created_at().to_string(),
+            updated_at: self.get_updated_at().as_deref().cloned(),
+            ..*self
         }
     }
 }
